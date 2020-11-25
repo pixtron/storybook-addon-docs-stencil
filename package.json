@@ -1,0 +1,39 @@
+{
+  "name": "@pxtrn/storybook-addon-docs-stencil",
+  "version": "1.0.0",
+  "description": "Converts stencil.js JsonDoc to storybook ArgTypes",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsc -w",
+    "tsc": "tsc -d",
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean && npm run lint && npm run tsc",
+    "lint": "eslint . --ext .ts --report-unused-disable-directives",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixtron/storybook-addon-docs-stencil.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pixtron/storybook-addon-docs-stencil/issues"
+  },
+  "homepage": "https://github.com/pixtron/storybook-addon-docs-stencil#readme",
+  "author": "Stefan Aebischer <os@pixtron.ch>",
+  "license": "MIT",
+  "dependencies": {
+    "@storybook/api": "^6.1.0",
+    "@storybook/client-logger": "^6.1.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "eslint": "^7.13.0",
+    "typescript": "^4.0.5"
+  },
+  "files": [
+    "dist/**/*",
+    "*.js",
+    "*.d.ts"
+  ]
+}

@@ -86,3 +86,34 @@ Everything above this line will be included in storybook
   shadow: true,
 })
 ```
+
+#### Troubleshooting
+
+##### When using @storybook/web-components
+
+`@storybook/web-components` overrides the preset configuration of this module.
+You can fix this with this preview config.
+
+```
+//.storybook/preview.js
+
+import { extractArgTypes, extractComponentDescription, setStencilDocJson } from '@pxtrn/storybook-addon-docs-stencil';
+
+export const parameters = {
+  ...
+  docs: {
+    extractArgTypes,
+    extractComponentDescription,
+  },
+};
+```
+
+##### Hint your component in your stories
+```
+// your-story.ts
+
+export default {
+  title: 'My Component',
+  component: 'my-component',
+};
+```

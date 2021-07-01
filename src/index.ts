@@ -53,6 +53,8 @@ const mapPropTypeToControl = (item: StencilJsonDocsProp): { type: string; option
   switch(item.type) {
     case 'string':
     case 'string | undefined':
+    case 'Date | string':
+    case 'Date':
       controlType = { type: 'text' };
     break;
     case 'number':

@@ -1,5 +1,5 @@
 {
-  "name": "@pxtrn/storybook-addon-docs-stencil",
+  "name": "@astrouxds/storybook-addon-docs-stencil",
   "version": "1.0.0",
   "description": "Converts stencil.js JsonDoc to storybook ArgTypes",
   "main": "dist/index.js",
@@ -16,9 +16,9 @@
     "url": "git+https://github.com/pixtron/storybook-addon-docs-stencil.git"
   },
   "bugs": {
-    "url": "https://github.com/pixtron/storybook-addon-docs-stencil/issues"
+    "url": "https://github.com/RocketCommunicationsInc/storybook-addon-docs-stencil/issues"
   },
-  "homepage": "https://github.com/pixtron/storybook-addon-docs-stencil#readme",
+  "homepage": "https://github.com/RocketCommunicationsInc/storybook-addon-docs-stencil#readme",
   "author": "Stefan Aebischer <os@pixtron.ch>",
   "license": "MIT",
   "dependencies": {

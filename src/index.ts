@@ -52,16 +52,21 @@ const mapPropTypeToControl = (item: StencilJsonDocsProp): { type: string; option
 
   switch(item.type) {
     case 'string':
+    case 'string | undefined':
       controlType = { type: 'text' };
     break;
     case 'number':
+    case 'number | undefined':
       controlType = { type: 'number' }
     break;
     case 'boolean':
+    case 'boolean | undefined':
       controlType = { type: 'boolean' }
     break;
     case 'function':
+    case 'function | undefined':
     case 'void':
+    case 'void | undefined':
       controlType = null;
     break;
     default:

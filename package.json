@@ -1,6 +1,6 @@
 {
   "name": "@astrouxds/storybook-addon-docs-stencil",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Converts stencil.js JsonDoc to storybook ArgTypes",
   "main": "dist/index.js",
   "scripts": {

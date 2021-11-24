@@ -5,14 +5,15 @@ Converts stencil.js doc json derived from stencils output target
 [`ArgTypes`](https://storybook.js.org/docs/react/api/argtypes).
 
 With this addon activated
+
 - Storybook will render basic controls for properties [Controls](https://storybook.js.org/docs/react/essentials/controls).
 - Storybook will auto generate documentation for Props, Events, Methods, Slots, Shadow Parts and Custom Properties.
-- Storybook doc page will contain stencils component documentation (readme.md or inline)   
+- Storybook doc page will contain stencils component documentation (readme.md or inline)
 
 ## Installation
 
 ```
-npm i -D @pxtrn/storybook-addon-docs-stencil
+npm i -D @astrouxds/storybook-addon-docs-stencil
 ```
 
 ## Usage
@@ -42,7 +43,7 @@ export const config: Config = {
 module.exports = {
   addons: [
     '@storybook/addon-essentials',
-    '@pxtrn/storybook-addon-docs-stencil'
+    '@astrouxds/storybook-addon-docs-stencil'
   ]
 }
 ```
@@ -50,7 +51,7 @@ module.exports = {
 ```
 //.storybook/preview.js
 
-import { setStencilDocJson } from '@pxtrn/storybook-addon-docs-stencil';
+import { setStencilDocJson } from '@astrouxds/storybook-addon-docs-stencil';
 import docJson from 'path/to/docs.json';
 if(docJson) setStencilDocJson(docJson);
 
@@ -97,7 +98,7 @@ You can fix this with this preview config.
 ```
 //.storybook/preview.js
 
-import { extractArgTypes, extractComponentDescription, setStencilDocJson } from '@pxtrn/storybook-addon-docs-stencil';
+import { extractArgTypes, extractComponentDescription, setStencilDocJson } from '@astrouxds/storybook-addon-docs-stencil';
 
 export const parameters = {
   ...
@@ -109,6 +110,7 @@ export const parameters = {
 ```
 
 ##### Hint your component in your stories
+
 ```
 // your-story.ts
 

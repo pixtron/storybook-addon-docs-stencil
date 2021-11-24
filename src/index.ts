@@ -193,8 +193,8 @@ export const setStencilDocJson = (stencilDocJson: StencilJsonDocs): void => {
   window.__STORYBOOK_STENCIL_DOC_JSON__ = stencilDocJson;
 };
 
-// @ts-ignore
 export const getStencilDocJson = (): StencilJsonDocs =>
+  // @ts-ignore
   window.__STORYBOOK_STENCIL_DOC_JSON__;
 
 /**

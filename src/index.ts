@@ -106,7 +106,7 @@ const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
   return (
     data &&
     data.reduce((acc, item) => {
-      acc[item.name] = {
+      acc[`prop-${item.name}`] = {
         name: item.attr ? item.attr : item.name,
         description: item.docs,
         type: { name: item.type, required: item.required },
@@ -127,7 +127,7 @@ const mapEventsData = (data: StencilJsonDocsEvent[]): ArgTypes => {
   return (
     data &&
     data.reduce((acc, item) => {
-      acc[item.event] = {
+      acc[`event-${item.event}`] = {
         name: item.event,
         description: item.docs,
         type: { name: "void" },
@@ -146,7 +146,7 @@ const mapMethodsData = (data: StencilJsonDocsMethod[]): ArgTypes => {
   return (
     data &&
     data.reduce((acc, item) => {
-      acc[item.name] = {
+      acc[`method-${item.name}`] = {
         name: item.name,
         description: item.docs,
         type: { name: "void" },
@@ -169,7 +169,7 @@ const mapGenericData = <T extends { name: string; docs: string }>(
     data &&
     data.reduce((acc, item) => {
       const type = { name: "void" };
-      acc[item.name] = {
+      acc[`${category}-${item.name}`] = {
         name: item.name,
         required: false,
         description: item.docs,

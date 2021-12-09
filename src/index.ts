@@ -46,6 +46,12 @@ const getMetaData = (tagName: string, stencilDocJson: StencilJsonDocs) => {
   return metaData;
 };
 
+const mapItemValues = (item: StencilJsonDocsProp) => {
+  return item.values
+    .filter(value => ['string', 'number'].includes(value.type))
+    .map(value => value.value);
+}
+
 const mapPropTypeToControl = (item: StencilJsonDocsProp): { type: string; options?: (string | number)[] } => {
   let controlType;
   let values = [];
@@ -65,19 +71,15 @@ const mapPropTypeToControl = (item: StencilJsonDocsProp): { type: string; option
       controlType = null;
     break;
     default:
-      values = item.values
-        .filter(value => ['string', 'number'].includes(value.type))
-        .map(value => value.value);
+      values = mapItemValues(item);
 
       if(values.length === 0) {
         controlType = { type: 'object' };
       } else if(values.length < 5) {
-        controlType = { type: 'radio', options: values };
+        controlType = { type: 'radio' };
       } else {
-        controlType = { type: 'select', options: values };
+        controlType = { type: 'select' };
       }
-
-      values
   }
 
   return controlType;
@@ -97,6 +99,7 @@ const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
           type: { summary: item.type },
           defaultValue: { summary: item.default },
         },
+        options: mapItemValues(item),
       };
       return acc;
     }, {} as ArgTypes)

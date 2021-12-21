@@ -46,61 +46,65 @@ const getMetaData = (tagName: string, stencilDocJson: StencilJsonDocs) => {
   return metaData;
 };
 
-const mapItemValues = (item: StencilJsonDocsProp) => {
+const mapItemValuesToOptions = (item: StencilJsonDocsProp) => {
   return item.values
     .filter(value => ['string', 'number'].includes(value.type))
     .map(value => value.value);
 }
 
-const mapPropTypeToControl = (item: StencilJsonDocsProp): { type: string; options?: (string | number)[] } => {
-  let controlType;
-  let values = [];
+const mapPropTypeToControl = (item: StencilJsonDocsProp): { control: {type: string}, options: (string | number)[] | null } => {
+  let control;
+  let options: string[] | null = null;
 
   switch(item.type) {
     case 'string':
-      controlType = { type: 'text' };
+      control = { type: 'text' };
     break;
     case 'number':
-      controlType = { type: 'number' }
+      control = { type: 'number' }
     break;
     case 'boolean':
-      controlType = { type: 'boolean' }
+      control = { type: 'boolean' }
     break;
     case 'function':
     case 'void':
-      controlType = null;
+      control = null;
     break;
     default:
-      values = mapItemValues(item);
+      options = mapItemValuesToOptions(item);
 
-      if(values.length === 0) {
-        controlType = { type: 'object' };
-      } else if(values.length < 5) {
-        controlType = { type: 'radio' };
+      if(options.length === 0) {
+        control = { type: 'object' };
+      } else if(options.length < 5) {
+        control = { type: 'radio' };
       } else {
-        controlType = { type: 'select' };
+        control = { type: 'select' };
       }
   }
 
-  return controlType;
+  return { control, options };
 }
 
 const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
   return (
     data &&
     data.reduce((acc, item) => {
+      const {control, options} = mapPropTypeToControl(item);
+
       acc[item.name] = {
         name: item.name,
         description: item.docs,
         type: { name: item.type, required: item.required },
-        control: mapPropTypeToControl(item),
+        control: control,
         table: {
           category: 'props',
           type: { summary: item.type },
           defaultValue: { summary: item.default },
         },
-        options: mapItemValues(item),
       };
+
+      if (options !== null) acc[item.name].options = options;
+
       return acc;
     }, {} as ArgTypes)
   );

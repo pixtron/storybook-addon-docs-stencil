@@ -157,6 +157,7 @@ const mapGenericData = <T extends {name: string, docs: string}>(data: T[], categ
         name: item.name,
         required: false,
         description: item.docs,
+        control: null,
         type,
         table: {
           category,

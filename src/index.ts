@@ -54,7 +54,7 @@ const mapItemValuesToOptions = (item: StencilJsonDocsProp) => {
 
 const mapPropTypeToControl = (item: StencilJsonDocsProp): { control: {type: string}, options: (string | number)[] | null } => {
   let control;
-  let options: string[] | null = null;
+  let options: (string | number)[] | null = null;
 
   switch(item.type) {
     case 'string':
@@ -89,7 +89,7 @@ const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
   return (
     data &&
     data.reduce((acc, item) => {
-      const {control, options} = mapPropTypeToControl(item);
+      const { control, options } = mapPropTypeToControl(item);
 
       acc[item.name] = {
         name: item.attr || item.name,

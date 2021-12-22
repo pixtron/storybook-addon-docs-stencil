@@ -94,7 +94,7 @@ const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
       acc[item.name] = {
         name: item.name,
         description: item.docs,
-        type: { name: item.type, required: item.required },
+        type: { required: item.required },
         control: control,
         table: {
           category: 'props',

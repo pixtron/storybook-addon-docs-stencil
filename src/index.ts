@@ -90,8 +90,9 @@ const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
     data &&
     data.reduce((acc, item) => {
       const { control, options } = mapPropTypeToControl(item);
+      const key = item.attr || item.name;
 
-      acc[item.name] = {
+      acc[key] = {
         name: item.attr || item.name,
         description: item.docs,
         type: { required: item.required },
@@ -103,7 +104,7 @@ const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
         },
       };
 
-      if (options !== null) acc[item.name].options = options;
+      if (options !== null) acc[key].options = options;
 
       return acc;
     }, {} as ArgTypes)

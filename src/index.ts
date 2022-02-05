@@ -2,6 +2,7 @@ import { ArgTypes } from '@storybook/api';
 import { logger } from '@storybook/client-logger';
 
 import {
+  ExtractArgTypesOptions,
   StencilJsonDocs,
   StencilJsonDocsProp,
   StencilJsonDocsMethod,
@@ -85,13 +86,16 @@ const mapPropTypeToControl = (item: StencilJsonDocsProp): { control: {type: stri
   return { control, options };
 }
 
-const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
+const mapPropsData = (data: StencilJsonDocsProp[], options: ExtractArgTypesOptions): ArgTypes => {
+  const { dashCase } = options;
+
   return (
     data &&
     data.reduce((acc, item) => {
       const { control, options } = mapPropTypeToControl(item);
+      const key = dashCase === true ? (item.attr || item.name) : item.name;
 
-      acc[item.name] = {
+      acc[key] = {
         name: item.attr || item.name,
         description: item.docs,
         type: { required: item.required },
@@ -103,7 +107,7 @@ const mapPropsData = (data: StencilJsonDocsProp[]): ArgTypes => {
         },
       };
 
-      if (options !== null) acc[item.name].options = options;
+      if (options !== null) acc[key].options = options;
 
       return acc;
     }, {} as ArgTypes)
@@ -185,12 +189,16 @@ export const getStencilDocJson = ():StencilJsonDocs => window.__STORYBOOK_STENCI
  * @param {string} tagName - stencil component for which to extract ArgTypes
  * @param {StencilJsonDocs} stencilDocJson - Stencil meta data from `docs-json` output target
  */
-export const extractArgTypesFromElements = (tagName: string, stencilDocJson: StencilJsonDocs): ArgTypes => {
+export const extractArgTypesFromElements = (
+  tagName: string,
+  stencilDocJson: StencilJsonDocs,
+  options: ExtractArgTypesOptions
+): ArgTypes => {
   const metaData = getMetaData(tagName, stencilDocJson);
 
   return (
     metaData && {
-      ...mapPropsData(metaData.props),
+      ...mapPropsData(metaData.props, options),
       ...mapEventsData(metaData.events),
       ...mapMethodsData(metaData.methods),
       ...mapGenericData<StencilJsonDocsSlot>(metaData.slots, 'slots'),
@@ -201,11 +209,24 @@ export const extractArgTypesFromElements = (tagName: string, stencilDocJson: Ste
 };
 
 /**
+ * @param {Partial<ExtractArgTypesOptions>} options - options for extractArgTypes
+ */
+export const extractArgTypesFactory = (
+  options: Partial<ExtractArgTypesOptions> = {}
+): (tagName: string) => ArgTypes => {
+  return (tagName: string): ArgTypes => {
+    return extractArgTypesFromElements(tagName, getStencilDocJson(), {
+      dashCase: false,
+      ...options
+    });
+  }
+};
+
+/**
  * @param {string} tagName - stencil component for which to extract ArgTypes
  */
-export const extractArgTypes = (tagName: string): ArgTypes => {
-  return extractArgTypesFromElements(tagName, getStencilDocJson());
-};
+export const extractArgTypes = extractArgTypesFactory();
+
 
 /**
  * @param {string} tagName - stencil component for which to extract description

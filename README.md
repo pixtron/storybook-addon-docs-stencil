@@ -59,6 +59,20 @@ export const parameters = {
 }
 ```
 
+#### Dash cased properties
+
+```
+//.storybook/preview.js
+
+import { extractArgTypesFactory } from '@pxtrn/storybook-addon-docs-stencil';
+
+export const parameters = {
+  docs: {
+    extractArgTypes: extractArgTypesFactory({ dashCase: true }),
+  }
+}
+```
+
 ### Component documentation
 
 #### readme.md

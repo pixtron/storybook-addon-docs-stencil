@@ -1,6 +1,6 @@
 {
   "name": "@pxtrn/storybook-addon-docs-stencil",
-  "version": "6.4.0",
+  "version": "6.4.1",
   "description": "Converts stencil.js JsonDoc to storybook ArgTypes",
   "main": "dist/index.js",
   "scripts": {

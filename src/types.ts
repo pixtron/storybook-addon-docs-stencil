@@ -1,3 +1,8 @@
+export interface ExtractArgTypesOptions {
+  // if `true` property names will be converted from camel-case to dash-case (default `false`)
+  dashCase: boolean;
+}
+
 export interface StencilJsonDocs {
   components: StencilJsonDocsComponent[];
   timestamp: string;

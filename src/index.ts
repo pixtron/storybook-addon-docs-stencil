@@ -10,6 +10,7 @@ import {
   StencilJsonDocsStyle,
   StencilJsonDocsSlot,
   StencilJsonDocsPart,
+  StencilJsonDocsComponent,
 } from './types';
 
 const isValidComponent = (tagName: string) => {
@@ -191,10 +192,9 @@ export const getStencilDocJson = ():StencilJsonDocs => window.__STORYBOOK_STENCI
  */
 export const extractArgTypesFromElements = (
   tagName: string,
-  stencilDocJson: StencilJsonDocs,
   options: ExtractArgTypesOptions
 ): ArgTypes => {
-  const metaData = getMetaData(tagName, stencilDocJson);
+  const metaData = getComponentMetaData(tagName);
 
   return (
     metaData && {
@@ -215,7 +215,7 @@ export const extractArgTypesFactory = (
   options: Partial<ExtractArgTypesOptions> = {}
 ): (tagName: string) => ArgTypes => {
   return (tagName: string): ArgTypes => {
-    return extractArgTypesFromElements(tagName, getStencilDocJson(), {
+    return extractArgTypesFromElements(tagName, {
       dashCase: false,
       ...options
     });
@@ -232,6 +232,14 @@ export const extractArgTypes = extractArgTypesFactory();
  * @param {string} tagName - stencil component for which to extract description
  */
 export const extractComponentDescription = (tagName: string): string => {
-  const metaData = getMetaData(tagName, getStencilDocJson());
+  const metaData = getComponentMetaData(tagName);
   return metaData && (metaData.readme || metaData.docs);
 };
+
+/**
+ *
+ * @param {string} tagName - stencil component for which to get the metaData
+ */
+export const getComponentMetaData = (tagName: string): StencilJsonDocsComponent | null => {
+  return getMetaData(tagName, getStencilDocJson());
+}

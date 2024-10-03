@@ -1,4 +1,4 @@
-import { ArgTypes } from '@storybook/api';
+import { ArgTypes, SBType } from '@storybook/types';
 import { logger } from '@storybook/client-logger';
 
 import {
@@ -48,43 +48,49 @@ const getMetaData = (tagName: string, stencilDocJson: StencilJsonDocs) => {
   return metaData;
 };
 
-const mapItemValuesToOptions = (item: StencilJsonDocsProp) => {
-  return item.values
-    .filter(value => ['string', 'number'].includes(value.type))
-    .map(value => value.value);
+const mapPropType = (item: StencilJsonDocsProp): SBType => {
+  const { type, required } = item;
+
+  switch(type) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+      return { name: type, required };
+    default:
+      if(item.values.length === 1) {
+        // TODO - in this case type be improved eg. "object" | "function" | "array" ...
+        return { name: 'other', value: type, required };
+      }
+
+      if(isEnum(item)) {
+        return {
+          name: 'enum',
+          required,
+          value: item.values.map(({ value }) => value),
+        };
+      }
+
+      return { name: 'union', value: mapItemValuesToSbType(item), required };
+  }
 }
 
-const mapPropTypeToControl = (item: StencilJsonDocsProp): { control: {type: string}, options: (string | number)[] | null } => {
-  let control;
-  let options: (string | number)[] | null = null;
+const isEnum = (item: StencilJsonDocsProp): boolean => {
+  return item.values.length > 1
+    &&
+    item.values.findIndex(({ type }) => !['string', 'number'].includes(type)) === -1
+}
 
-  switch(item.type) {
-    case 'string':
-      control = { type: 'text' };
-    break;
-    case 'number':
-      control = { type: 'number' }
-    break;
-    case 'boolean':
-      control = { type: 'boolean' }
-    break;
-    case 'function':
-    case 'void':
-      control = null;
-    break;
-    default:
-      options = mapItemValuesToOptions(item);
-
-      if(options.length === 0) {
-        control = { type: 'object' };
-      } else if(options.length < 5) {
-        control = { type: 'radio' };
-      } else {
-        control = { type: 'select' };
-      }
-  }
-
-  return { control, options };
+const mapItemValuesToSbType = (item: StencilJsonDocsProp): SBType[] => {
+  return item.values.map(({ type, value }): SBType => {
+    switch(type) {
+      case 'string':
+      case 'number':
+      case 'boolean':
+        return { name: type };
+      default:
+        return { name: 'other', value };
+    }
+  });
 }
 
 const mapPropsData = (data: StencilJsonDocsProp[], options: ExtractArgTypesOptions): ArgTypes => {
@@ -93,14 +99,14 @@ const mapPropsData = (data: StencilJsonDocsProp[], options: ExtractArgTypesOptio
   return (
     data &&
     data.reduce((acc, item) => {
-      const { control, options } = mapPropTypeToControl(item);
+      const type = mapPropType(item);
       const key = dashCase === true ? (item.attr || item.name) : item.name;
 
       acc[key] = {
         name: item.attr || item.name,
         description: item.docs,
-        type: { required: item.required },
-        control: control,
+        required: item.required,
+        type: type,
         table: {
           category: 'props',
           type: { summary: item.type },
@@ -108,7 +114,10 @@ const mapPropsData = (data: StencilJsonDocsProp[], options: ExtractArgTypesOptio
         },
       };
 
-      if (options !== null) acc[key].options = options;
+      if (type.name === 'enum' && type.value.length > 2) {
+        acc[key].options = type.value;
+        acc[key].control = { type: 'select' };
+      }
 
       return acc;
     }, {} as ArgTypes)
@@ -122,7 +131,6 @@ const mapEventsData = (data: StencilJsonDocsEvent[]): ArgTypes => {
       acc[`event-${item.event}`] = {
         name: item.event,
         description: item.docs,
-        type: { name: 'void' },
         control: null,
         table: {
           category: 'events',
@@ -141,7 +149,6 @@ const mapMethodsData = (data: StencilJsonDocsMethod[]): ArgTypes => {
       acc[`method-${item.name}`] = {
         name: item.name,
         description: item.docs,
-        type: { name: 'void' },
         control: null,
         table: {
           category: 'methods',
@@ -163,7 +170,6 @@ const mapGenericData = <T extends {name: string, docs: string}>(data: T[], categ
         required: false,
         description: item.docs,
         control: null,
-        type,
         table: {
           category,
           type,

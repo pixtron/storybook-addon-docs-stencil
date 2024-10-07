@@ -1,23 +1,18 @@
 {
-  "compileOnSave": true,
   "compilerOptions": {
-    "baseUrl": ".",
-    "incremental": false,
-    "noImplicitAny": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "jsx": "react",
-    "module": "commonjs",
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "esModuleInterop": true,
-    "target": "es5",
-    "types": [],
-    "lib": ["es2017", "dom"]
+    "experimentalDecorators": true,
+    "incremental": false,
+    "isolatedModules": true,
+    "jsx": "react",
+    "lib": ["es2020", "dom"],
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "target": "ES2020"
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/node_modules", "src/*.test.ts"]
+  "include": ["src/**/*"]
 }

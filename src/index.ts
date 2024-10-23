@@ -20,8 +20,10 @@ const isValidComponent = (tagName: string) => {
   if (typeof tagName === 'string') {
     return true;
   }
-  throw new Error('Provided component needs to be a string. e.g. component: "my-element"');
-}
+  throw new Error(
+    'Provided component needs to be a string. e.g. component: "my-element"',
+  );
+};
 
 const isValidMetaData = (stencilDocJson: StencilJsonDocs) => {
   if (!stencilDocJson) {
@@ -32,7 +34,7 @@ const isValidMetaData = (stencilDocJson: StencilJsonDocs) => {
   }
   throw new Error(`You need to setup valid meta data in your preview.js via setStencilDocJson().
     The meta data can be generated with the stencil output target 'docs-json'.`);
-}
+};
 
 const getMetaData = (tagName: string, stencilDocJson: StencilJsonDocs) => {
   if (!isValidComponent(tagName) || !isValidMetaData(stencilDocJson)) {
@@ -40,7 +42,7 @@ const getMetaData = (tagName: string, stencilDocJson: StencilJsonDocs) => {
   }
 
   const metaData = stencilDocJson.components.find(
-    (component) => component.tag.toUpperCase() === tagName.toUpperCase()
+    component => component.tag.toUpperCase() === tagName.toUpperCase(),
   );
   if (!metaData) {
     logger.warn(`Component not found in stencil doc json: ${tagName}`);
@@ -51,18 +53,18 @@ const getMetaData = (tagName: string, stencilDocJson: StencilJsonDocs) => {
 const mapPropType = (item: StencilJsonDocsProp): SBType => {
   const { type, required } = item;
 
-  switch(type) {
+  switch (type) {
     case 'string':
     case 'number':
     case 'boolean':
       return { name: type, required };
     default:
-      if(item.values.length === 1) {
+      if (item.values.length === 1) {
         // TODO - in this case type be improved eg. "object" | "function" | "array" ...
         return { name: 'other', value: type, required };
       }
 
-      if(isEnum(item)) {
+      if (isEnum(item)) {
         return {
           name: 'enum',
           required,
@@ -72,17 +74,20 @@ const mapPropType = (item: StencilJsonDocsProp): SBType => {
 
       return { name: 'union', value: mapItemValuesToSbType(item), required };
   }
-}
+};
 
 const isEnum = (item: StencilJsonDocsProp): boolean => {
-  return item.values.length > 1
-    &&
-    item.values.findIndex(({ type }) => !['string', 'number'].includes(type)) === -1
-}
+  return (
+    item.values.length > 1 &&
+    item.values.findIndex(
+      ({ type }) => !['string', 'number'].includes(type),
+    ) === -1
+  );
+};
 
 const mapItemValuesToSbType = (item: StencilJsonDocsProp): SBType[] => {
   return item.values.map(({ type, value }): SBType => {
-    switch(type) {
+    switch (type) {
       case 'string':
       case 'number':
       case 'boolean':
@@ -91,16 +96,19 @@ const mapItemValuesToSbType = (item: StencilJsonDocsProp): SBType[] => {
         return { name: 'other', value };
     }
   });
-}
+};
 
-const mapPropsData = (data: StencilJsonDocsProp[], options: ExtractArgTypesOptions): ArgTypes => {
+const mapPropsData = (
+  data: StencilJsonDocsProp[],
+  options: ExtractArgTypesOptions,
+): ArgTypes => {
   const { dashCase } = options;
 
   return (
     data &&
     data.reduce((acc, item) => {
       const type = mapPropType(item);
-      const key = dashCase === true ? (item.attr || item.name) : item.name;
+      const key = dashCase === true ? item.attr || item.name : item.name;
 
       acc[key] = {
         name: item.attr || item.name,
@@ -122,7 +130,7 @@ const mapPropsData = (data: StencilJsonDocsProp[], options: ExtractArgTypesOptio
       return acc;
     }, {} as ArgTypes)
   );
-}
+};
 
 const mapEventsData = (data: StencilJsonDocsEvent[]): ArgTypes => {
   return (
@@ -134,13 +142,13 @@ const mapEventsData = (data: StencilJsonDocsEvent[]): ArgTypes => {
         control: null,
         table: {
           category: 'events',
-          type: { summary: item.detail }
+          type: { summary: item.detail },
         },
       };
       return acc;
     }, {} as ArgTypes)
   );
-}
+};
 
 const mapMethodsData = (data: StencilJsonDocsMethod[]): ArgTypes => {
   return (
@@ -152,15 +160,18 @@ const mapMethodsData = (data: StencilJsonDocsMethod[]): ArgTypes => {
         control: null,
         table: {
           category: 'methods',
-          type: { summary: item.signature }
+          type: { summary: item.signature },
         },
       };
       return acc;
     }, {} as ArgTypes)
   );
-}
+};
 
-const mapGenericData = <T extends {name: string, docs: string}>(data: T[], category: string): ArgTypes => {
+const mapGenericData = <T extends { name: string; docs: string }>(
+  data: T[],
+  category: string,
+): ArgTypes => {
   return (
     data &&
     data.reduce((acc, item) => {
@@ -178,8 +189,7 @@ const mapGenericData = <T extends {name: string, docs: string}>(data: T[], categ
       return acc;
     }, {} as ArgTypes)
   );
-}
-
+};
 
 /**
  * @param stencilDocJson stencil json doc
@@ -189,8 +199,10 @@ export const setStencilDocJson = (stencilDocJson: StencilJsonDocs): void => {
   window.__STORYBOOK_STENCIL_DOC_JSON__ = stencilDocJson;
 };
 
-// @ts-ignore
-export const getStencilDocJson = ():StencilJsonDocs => window.__STORYBOOK_STENCIL_DOC_JSON__;
+export const getStencilDocJson = (): StencilJsonDocs => {
+  // @ts-ignore
+  return window.__STORYBOOK_STENCIL_DOC_JSON__;
+};
 
 /**
  * @param {string} tagName - stencil component for which to extract ArgTypes
@@ -198,7 +210,7 @@ export const getStencilDocJson = ():StencilJsonDocs => window.__STORYBOOK_STENCI
  */
 export const extractArgTypesFromElements = (
   tagName: string,
-  options: ExtractArgTypesOptions
+  options: ExtractArgTypesOptions,
 ): ArgTypes => {
   const metaData = getComponentMetaData(tagName);
 
@@ -208,8 +220,14 @@ export const extractArgTypesFromElements = (
       ...mapEventsData(metaData.events),
       ...mapMethodsData(metaData.methods),
       ...mapGenericData<StencilJsonDocsSlot>(metaData.slots, 'slots'),
-      ...mapGenericData<StencilJsonDocsStyle>(metaData.styles, 'css custom properties'),
-      ...mapGenericData<StencilJsonDocsPart>(metaData.parts, 'css shadow parts'),
+      ...mapGenericData<StencilJsonDocsStyle>(
+        metaData.styles,
+        'css custom properties',
+      ),
+      ...mapGenericData<StencilJsonDocsPart>(
+        metaData.parts,
+        'css shadow parts',
+      ),
     }
   );
 };
@@ -218,21 +236,20 @@ export const extractArgTypesFromElements = (
  * @param {Partial<ExtractArgTypesOptions>} options - options for extractArgTypes
  */
 export const extractArgTypesFactory = (
-  options: Partial<ExtractArgTypesOptions> = {}
-): (tagName: string) => ArgTypes => {
+  options: Partial<ExtractArgTypesOptions> = {},
+): ((tagName: string) => ArgTypes) => {
   return (tagName: string): ArgTypes => {
     return extractArgTypesFromElements(tagName, {
       dashCase: false,
-      ...options
+      ...options,
     });
-  }
+  };
 };
 
 /**
  * @param {string} tagName - stencil component for which to extract ArgTypes
  */
 export const extractArgTypes = extractArgTypesFactory();
-
 
 /**
  * @param {string} tagName - stencil component for which to extract description
@@ -246,6 +263,8 @@ export const extractComponentDescription = (tagName: string): string => {
  *
  * @param {string} tagName - stencil component for which to get the metaData
  */
-export const getComponentMetaData = (tagName: string): StencilJsonDocsComponent | null => {
+export const getComponentMetaData = (
+  tagName: string,
+): StencilJsonDocsComponent | null => {
   return getMetaData(tagName, getStencilDocJson());
-}
+};

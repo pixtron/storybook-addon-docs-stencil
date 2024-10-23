@@ -19,10 +19,5 @@
     "lib": ["es2017", "dom"]
   },
   "include": ["src/**/*"],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/node_modules",
-    "src/*.test.ts"
-  ]
+  "exclude": ["dist", "node_modules", "**/node_modules", "src/*.test.ts"]
 }

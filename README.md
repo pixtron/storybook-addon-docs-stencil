@@ -5,9 +5,10 @@ Converts stencil.js doc json derived from stencils output target
 [`ArgTypes`](https://storybook.js.org/docs/react/api/argtypes).
 
 With this addon activated
+
 - Storybook will render basic controls for properties [Controls](https://storybook.js.org/docs/react/essentials/controls).
 - Storybook will auto generate documentation for Props, Events, Methods, Slots, Shadow Parts and Custom Properties.
-- Storybook doc page will contain stencils component documentation (readme.md or inline)   
+- Storybook doc page will contain stencils component documentation (readme.md or inline)
 
 ## Installation
 
@@ -123,6 +124,7 @@ export const parameters = {
 ```
 
 ##### Hint your component in your stories
+
 ```
 // your-story.ts
 

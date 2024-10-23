@@ -1,5 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-export function config(entry: any[] = [], _: any = {}): any[] {
-  // @ts-ignore
-  return [require.resolve(`./config`), ...entry];
-}
+import { PresetProperty } from '@storybook/types';
+
+export const previewAnnotations: PresetProperty<'previewAnnotations'> = async (
+  entries: string[] = [],
+) => {
+  return [...entries, require.resolve(`./config`)];
+};

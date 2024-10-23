@@ -11,6 +11,8 @@ import {
   StencilJsonDocsSlot,
   StencilJsonDocsPart,
   StencilJsonDocsComponent,
+  GenericCategory,
+  Category,
 } from './types';
 
 const isValidComponent = (tagName: string) => {
@@ -104,6 +106,9 @@ const mapPropsData = (
 ): ArgTypes => {
   const { dashCase } = options;
 
+  const category = 'props';
+  if (excludeCategory(category, options)) return {};
+
   return (
     data &&
     data.reduce((acc, item) => {
@@ -116,7 +121,7 @@ const mapPropsData = (
         required: item.required,
         type: type,
         table: {
-          category: 'props',
+          category,
           type: { summary: item.type },
           defaultValue: { summary: item.default },
         },
@@ -132,7 +137,13 @@ const mapPropsData = (
   );
 };
 
-const mapEventsData = (data: StencilJsonDocsEvent[]): ArgTypes => {
+const mapEventsData = (
+  data: StencilJsonDocsEvent[],
+  options: ExtractArgTypesOptions,
+): ArgTypes => {
+  const category = 'events';
+  if (excludeCategory(category, options)) return {};
+
   return (
     data &&
     data.reduce((acc, item) => {
@@ -143,7 +154,7 @@ const mapEventsData = (data: StencilJsonDocsEvent[]): ArgTypes => {
           disabled: true,
         },
         table: {
-          category: 'events',
+          category,
           type: { summary: item.detail },
         },
       };
@@ -152,7 +163,13 @@ const mapEventsData = (data: StencilJsonDocsEvent[]): ArgTypes => {
   );
 };
 
-const mapMethodsData = (data: StencilJsonDocsMethod[]): ArgTypes => {
+const mapMethodsData = (
+  data: StencilJsonDocsMethod[],
+  options: ExtractArgTypesOptions,
+): ArgTypes => {
+  const category = 'methods';
+  if (excludeCategory(category, options)) return {};
+
   return (
     data &&
     data.reduce((acc, item) => {
@@ -163,7 +180,7 @@ const mapMethodsData = (data: StencilJsonDocsMethod[]): ArgTypes => {
           disabled: true,
         },
         table: {
-          category: 'methods',
+          category,
           type: { summary: item.signature },
         },
       };
@@ -174,8 +191,11 @@ const mapMethodsData = (data: StencilJsonDocsMethod[]): ArgTypes => {
 
 const mapGenericData = <T extends { name: string; docs: string }>(
   data: T[],
-  category: string,
+  category: GenericCategory,
+  options: ExtractArgTypesOptions,
 ): ArgTypes => {
+  if (excludeCategory(category, options)) return {};
+
   return (
     data &&
     data.reduce((acc, item) => {
@@ -194,6 +214,16 @@ const mapGenericData = <T extends { name: string; docs: string }>(
       };
       return acc;
     }, {} as ArgTypes)
+  );
+};
+
+const excludeCategory = (
+  category: Category,
+  options: ExtractArgTypesOptions,
+) => {
+  return (
+    Array.isArray(options.excludeCategories) &&
+    options.excludeCategories.includes(category)
   );
 };
 
@@ -223,16 +253,18 @@ export const extractArgTypesFromElements = (
   return (
     metaData && {
       ...mapPropsData(metaData.props, options),
-      ...mapEventsData(metaData.events),
-      ...mapMethodsData(metaData.methods),
-      ...mapGenericData<StencilJsonDocsSlot>(metaData.slots, 'slots'),
+      ...mapEventsData(metaData.events, options),
+      ...mapMethodsData(metaData.methods, options),
+      ...mapGenericData<StencilJsonDocsSlot>(metaData.slots, 'slots', options),
       ...mapGenericData<StencilJsonDocsStyle>(
         metaData.styles,
         'css custom properties',
+        options,
       ),
       ...mapGenericData<StencilJsonDocsPart>(
         metaData.parts,
         'css shadow parts',
+        options,
       ),
     }
   );
@@ -247,6 +279,7 @@ export const extractArgTypesFactory = (
   return (tagName: string): ArgTypes => {
     return extractArgTypesFromElements(tagName, {
       dashCase: false,
+      excludeCategories: [],
       ...options,
     });
   };

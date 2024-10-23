@@ -139,7 +139,9 @@ const mapEventsData = (data: StencilJsonDocsEvent[]): ArgTypes => {
       acc[`event-${item.event}`] = {
         name: item.event,
         description: item.docs,
-        control: null,
+        control: {
+          disabled: true,
+        },
         table: {
           category: 'events',
           type: { summary: item.detail },
@@ -157,7 +159,9 @@ const mapMethodsData = (data: StencilJsonDocsMethod[]): ArgTypes => {
       acc[`method-${item.name}`] = {
         name: item.name,
         description: item.docs,
-        control: null,
+        control: {
+          disabled: true,
+        },
         table: {
           category: 'methods',
           type: { summary: item.signature },
@@ -180,7 +184,9 @@ const mapGenericData = <T extends { name: string; docs: string }>(
         name: item.name,
         required: false,
         description: item.docs,
-        control: null,
+        control: {
+          disabled: true,
+        },
         table: {
           category,
           type,

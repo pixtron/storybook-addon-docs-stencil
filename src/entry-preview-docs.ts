@@ -4,6 +4,6 @@ export const parameters = {
   docs: {
     extractArgTypes,
     extractComponentDescription,
-    inlineStories: true,
+    story: { inline: true },
   },
 };

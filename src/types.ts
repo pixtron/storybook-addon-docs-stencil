@@ -3,13 +3,18 @@ export type GenericCategory =
   | 'css custom properties'
   | 'css shadow parts';
 
-export type Category = 'props' | 'events' | 'methods' | GenericCategory;
+export type Category =
+  | 'properties'
+  | 'attributes'
+  | 'events'
+  | 'methods'
+  | GenericCategory;
 
 export interface ExtractArgTypesOptions {
-  // if `true` property names will be converted from camel-case to dash-case (default `false`)
-  dashCase: boolean;
-  // categories to exclude from docs. (default: [])
+  // categories to exclude from docs. (default: ['attributes'])
   excludeCategories: Category[];
+  // for which category to render controls (default: 'properties')
+  controlsFor: 'attributes' | 'properties';
 }
 
 export interface StencilJsonDocs {

@@ -1,4 +1,4 @@
-import { ArgTypes, SBType } from '@storybook/types';
+import { ArgTypes, InputType, SBType } from '@storybook/types';
 import { logger } from '@storybook/client-logger';
 
 import {
@@ -100,36 +100,68 @@ const mapItemValuesToSbType = (item: StencilJsonDocsProp): SBType[] => {
   });
 };
 
+const mapPropItem = (
+  item: StencilJsonDocsProp,
+  name: string,
+  category: 'attributes' | 'properties',
+  hasControl: boolean,
+): InputType => {
+  const inputType: InputType = {
+    name: name,
+    description: item.docs,
+    required: item.required,
+    table: {
+      category,
+      type: { summary: item.type },
+      defaultValue: { summary: item.default },
+    },
+  };
+
+  if (hasControl) {
+    const type = mapPropType(item);
+    inputType.type = type;
+
+    if (type.name === 'enum' && type.value.length > 2) {
+      inputType.options = type.value;
+      inputType.control = { type: 'select' };
+    }
+  } else {
+    inputType.control = {
+      disabled: true,
+    };
+  }
+
+  return inputType;
+};
+
 const mapPropsData = (
   data: StencilJsonDocsProp[],
   options: ExtractArgTypesOptions,
 ): ArgTypes => {
-  const { dashCase } = options;
+  const excludeAttributes = excludeCategory('attributes', options);
+  const excludeProperties = excludeCategory('properties', options);
 
-  const category = 'props';
-  if (excludeCategory(category, options)) return {};
+  if (excludeAttributes && excludeProperties) return {};
+
+  const { controlsFor } = options;
 
   return (
     data &&
     data.reduce((acc, item) => {
-      const type = mapPropType(item);
-      const key = dashCase === true ? item.attr || item.name : item.name;
+      if (!excludeAttributes && item.attr) {
+        const hasControl = controlsFor === 'attributes';
+        const name = item.attr;
+        const key = hasControl ? name : `attribute-${name}`;
 
-      acc[key] = {
-        name: item.attr || item.name,
-        description: item.docs,
-        required: item.required,
-        type: type,
-        table: {
-          category,
-          type: { summary: item.type },
-          defaultValue: { summary: item.default },
-        },
-      };
+        acc[key] = mapPropItem(item, name, 'attributes', hasControl);
+      }
 
-      if (type.name === 'enum' && type.value.length > 2) {
-        acc[key].options = type.value;
-        acc[key].control = { type: 'select' };
+      if (!excludeProperties) {
+        const hasControl = controlsFor === 'properties';
+        const name = item.name;
+        const key = hasControl ? name : `property-${name}`;
+
+        acc[key] = mapPropItem(item, name, 'properties', hasControl);
       }
 
       return acc;
@@ -276,12 +308,23 @@ export const extractArgTypesFromElements = (
 export const extractArgTypesFactory = (
   options: Partial<ExtractArgTypesOptions> = {},
 ): ((tagName: string) => ArgTypes) => {
+  const opts: ExtractArgTypesOptions = {
+    excludeCategories: ['attributes'],
+    controlsFor: 'properties',
+    ...options,
+  };
+
+  if (
+    Array.isArray(opts.excludeCategories) &&
+    opts.excludeCategories.includes(opts.controlsFor)
+  ) {
+    logger.warn(
+      `Category "${opts.controlsFor}" configured for conrols in options.controlsFor is excluded by options.excludeCategories`,
+    );
+  }
+
   return (tagName: string): ArgTypes => {
-    return extractArgTypesFromElements(tagName, {
-      dashCase: false,
-      excludeCategories: [],
-      ...options,
-    });
+    return extractArgTypesFromElements(tagName, opts);
   };
 };
 

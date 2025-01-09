@@ -179,15 +179,16 @@ const mapEventsData = (
   return (
     data &&
     data.reduce((acc, item) => {
-      acc[`event-${item.event}`] = {
+      acc[item.event] = {
         name: item.event,
+        action: item.event,
         description: item.docs,
         control: {
           disabled: true,
         },
         table: {
           category,
-          type: { summary: item.detail },
+          type: { summary: `CustomEvent<${item.detail}>` },
         },
       };
       return acc;
@@ -205,7 +206,7 @@ const mapMethodsData = (
   return (
     data &&
     data.reduce((acc, item) => {
-      acc[`method-${item.name}`] = {
+      acc[item.name] = {
         name: item.name,
         description: item.docs,
         control: {

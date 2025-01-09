@@ -36,6 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "@storybook/client-logger": "^7.6.20",
+    "@storybook/preview-api": "^7.6.20",
     "@storybook/types": "^7.6.20"
   },
   "devDependencies": {
@@ -58,6 +59,8 @@
   ],
   "bundler": {
     "exportEntries": [
+      "src/extract-arg-types.ts",
+      "src/render.ts",
       "src/index.ts"
     ],
     "managerEntries": [

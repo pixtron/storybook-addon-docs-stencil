@@ -10,11 +10,20 @@ export type Category =
   | 'methods'
   | GenericCategory;
 
+export interface RenderOptions {
+  // the nameing used in ExtractArgTypesOptions (default: 'native)
+  eventNameing: 'native' | 'jsx';
+  // if events should be bound or not (default: true)
+  bindEvents: boolean;
+}
+
 export interface ExtractArgTypesOptions {
   // categories to exclude from docs. (default: ['attributes'])
   excludeCategories: Category[];
   // for which category to render controls (default: 'properties')
   controlsFor: 'attributes' | 'properties';
+  // nameing of the arg key for events (default: 'native'). If jsx the events can be spread to the component.
+  eventNameing: 'native' | 'jsx';
 }
 
 export interface StencilJsonDocs {

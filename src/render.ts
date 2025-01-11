@@ -1,7 +1,9 @@
 import type { ArgsStoryFn } from '@storybook/types';
 import { useEffect } from '@storybook/preview-api';
+import { RenderOptions } from './types';
 
 type Handlers = [string, EventListenerOrEventListenerObject][];
+
 const addEventListeners = (element: Element, handlers: Handlers) => {
   useEffect(() => {
     handlers.forEach(([name, handler]) =>
@@ -15,7 +17,15 @@ const addEventListeners = (element: Element, handlers: Handlers) => {
 };
 
 // Default render method
-export const stencilRender = (): ArgsStoryFn => {
+export const stencilRender = (
+  options: Partial<RenderOptions> = {},
+): ArgsStoryFn => {
+  const opts: RenderOptions = {
+    eventNameing: 'native',
+    bindEvents: true,
+    ...options,
+  };
+
   return (args, context) => {
     const { id, component, argTypes } = context;
 
@@ -38,7 +48,11 @@ export const stencilRender = (): ArgsStoryFn => {
       const argType = argTypes[key];
 
       if (arg.isAction) {
-        handlers.push([key, arg]);
+        const eventName =
+          opts.eventNameing === 'jsx'
+            ? `${key.charAt(2).toLowerCase()}${key.slice(3)}`
+            : key;
+        handlers.push([eventName, arg]);
       } else if (argType && argType.isAttribute) {
         element.setAttribute(key, arg);
       } else {
@@ -47,7 +61,9 @@ export const stencilRender = (): ArgsStoryFn => {
       }
     });
 
-    if (handlers.length > 0) addEventListeners(element, handlers);
+    if (opts.bindEvents && handlers.length > 0) {
+      addEventListeners(element, handlers);
+    }
 
     return element;
   };

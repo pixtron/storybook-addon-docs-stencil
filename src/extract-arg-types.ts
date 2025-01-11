@@ -180,7 +180,12 @@ const mapEventsData = (
   return (
     data &&
     data.reduce((acc, item) => {
-      acc[item.event] = {
+      const key =
+        options.eventNameing === 'jsx'
+          ? `on${item.event.charAt(0).toUpperCase()}${item.event.slice(1)}`
+          : item.event;
+
+      acc[key] = {
         name: item.event,
         action: item.event,
         description: item.docs,
@@ -313,6 +318,7 @@ export const extractArgTypesFactory = (
   const opts: ExtractArgTypesOptions = {
     excludeCategories: ['attributes'],
     controlsFor: 'properties',
+    eventNameing: 'native',
     ...options,
   };
 

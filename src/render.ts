@@ -1,4 +1,4 @@
-import type { ArgsStoryFn } from '@storybook/types';
+import type { Args, ArgsStoryFn, Renderer } from '@storybook/types';
 import { useEffect } from '@storybook/preview-api';
 import { RenderOptions } from './types';
 
@@ -17,9 +17,12 @@ const addEventListeners = (element: Element, handlers: Handlers) => {
 };
 
 // Default render method
-export const stencilRender = (
+export const stencilRender = <
+  TRenderer extends Renderer = Renderer,
+  TArgs = Args,
+>(
   options: Partial<RenderOptions> = {},
-): ArgsStoryFn => {
+): ArgsStoryFn<TRenderer, TArgs> => {
   const opts: RenderOptions = {
     eventNameing: 'native',
     bindEvents: true,
@@ -45,7 +48,7 @@ export const stencilRender = (
     const handlers: Handlers = [];
 
     Object.entries(args).forEach(([key, arg]) => {
-      const argType = argTypes[key];
+      const argType = argTypes[key as keyof typeof args];
 
       if (arg.isAction) {
         const eventName =

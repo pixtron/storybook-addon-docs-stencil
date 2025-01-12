@@ -42,7 +42,7 @@ export interface StencilJsonDocsComponent {
   filePath?: string;
   readmePath?: string;
   usagesDir?: string;
-  encapsulation: 'shadow' | 'scoped' | 'none';
+  encapsulation: string;
   tag: string;
   readme: string;
   docs: string;
@@ -87,7 +87,7 @@ export interface StencilJsonDocsProp {
   reflectToAttr: boolean;
   docs: string;
   docsTags: StencilJsonDocsTag[];
-  default: string;
+  default?: string;
   deprecation?: string;
   values: StencilJsonDocsValue[];
   optional: boolean;

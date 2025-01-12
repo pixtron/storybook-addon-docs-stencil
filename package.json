@@ -34,14 +34,13 @@
   "homepage": "https://github.com/pixtron/storybook-addon-docs-stencil#readme",
   "author": "Stefan Aebischer <os@pixtron.ch>",
   "license": "MIT",
-  "dependencies": {
-    "@storybook/client-logger": "^7.6.20",
-    "@storybook/preview-api": "^7.6.20",
-    "@storybook/types": "^7.6.20"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@storybook/client-logger": "^8.4.7",
     "@storybook/manager": "^8.4.7",
     "@storybook/preview": "^8.4.7",
+    "@storybook/preview-api": "^8.4.7",
+    "@storybook/types": "^8.4.7",
     "@types/eslint__js": "^8.42.3",
     "eslint": "^9.18.0",
     "husky": "^9.1.7",
@@ -53,8 +52,8 @@
     "vite": "^6.0.7"
   },
   "peerDependencies": {
-    "@storybook/client-logger": ">= 7.6.0",
-    "@storybook/preview-api": ">= 7.6.0"
+    "@storybook/client-logger": ">= 8.4",
+    "@storybook/preview-api": ">= 8.4"
   },
   "files": [
     "dist/**/*",
